@@ -1,11 +1,21 @@
 #include<stdio.h>
 #include<conio.h>
+#include<stdlib.h>
 #include<string.h>
 #include<math.h>
-void help();
-void commandchk(int *command);
-void clrfile();
-void save();
+#define maxroom 100
+int cmdChk(char *cmdptr);
+int help();
+int save(FILE *fptr);
+int load(FILE *fptr);
+
+//properties of player
+struct player{
+    int healthrn,maxhealth,exprn,maxexp,damage,level;
+    char weaponequip[10];
+    char shieldequip[10];
+};
+
 
 //properties of enemy
 struct enemy{
@@ -15,10 +25,12 @@ struct enemy{
     char roomtype[15];
 };
 
+
 //properties of weapon
 struct weapon{
     int damage,durablilityrn,maxdurability;
 };
+
 
 //properties of room
 struct room{
@@ -27,73 +39,90 @@ struct room{
     char type[10];
 };
 
-//properties of room
-struct player{
-    int healthrn,maxhealth,exprn,maxexp,damage,level;
-    char weaponequip[10];
-    char shieldequip[10];
-};
-
 
 //main function
 int main()
 {
     char command[10];
     printf("\t\t\t!! Welcome to Text RPG !!");
-
+    printf("\n\t\t~~~~~~~~~~~ !! MAIN MENU !! ~~~~~~~~~~~");
     printf("\n\t\t=> use 'help' to check the commands!\n");
     printf("\n\t\t=> use 'start' to start an new game!");
     printf("\n\t\t( !! it will overwrite your previous save !! )\n");
     printf("\n\t\t=> use 'load' to continue from the last save!\n");
-    while(1)
+    printf("\n\t\t=> use 'exit' to close the game!\n");
+    while(1)                                                            //this loop will repeatedly check if the user have made any choice
     {
         printf("\n\t>");
-        scanf("%s",&command);
-        if(command != "clear")
+        gets(command);
+        if(strcmp(command,"exit")==0)
         {
-            commandchk(&command);
+            exit(0);
+        }
+        else if(strcmp(command,"clear")!=0)                             //this will pass the program control to the cmdChk function to check the commands
+        {
+            cmdChk(command);
         }
         else
         {
-            clrscr();
+            system("cls");      //you can replace cls with clear if your system is linux or mac
         }
     }
 }
 
-//function to check command
-void commandchk(int command)
+
+//command check function for the main menu
+int cmdChk(char *cmdptr)
 {
-    switch (&command)
+    FILE *fptr;
+    fptr = fopen("save.txt","r");
+    int done = 0;
+    if(strcmp(cmdptr,"help")==0)
     {
-    case ("save"): save();
-        break;
-    case ("help"): help();
-        break;
-    case ("start"): clrfile();
-        break;
-    default:
-        break;
+        help();
+    }
+    else if(strcmp(cmdptr,"start")==0)
+    {
+        printf("you used start command");
+    }
+    else if(strcmp(cmdptr,"load")==0)
+    {
+        load();
+    }
+    else
+    {
+        printf("command not found");
+        done=1;
+    }
+    if(done!=1)
+    {
+        fclose("save.txt");
+        printf("!! Game started !!");
     }
 }
 
 //function to check all commands
-void help()
+int help()
 {
     printf("use 'exit' to close the game!");
     printf("use 'save' to save the game!");
     printf("use 'clear' to clear the screen!");
-    printf("help command worked");
 }
 
 //function to clear the save file
-void clrfile()
+int clrfile()
 {
     
 }
 
 //function to save the file
-void save()
+int save(FILE *fptr)
 {
     printf("\t\t!! Game Saved !!");
-    printf("save command worked");
+}
+
+//function to save the file
+int load(FILE *fptr)
+{
+    printf("\t\t!! Game Loaded !!");
 }
